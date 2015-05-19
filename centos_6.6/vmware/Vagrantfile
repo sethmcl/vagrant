@@ -1,0 +1,22 @@
+VAGRANTFILE_API_VERSION = "2"
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'vmware_fusion'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # CentOS
+  config.vm.define :centos do |c|
+    c.vm.box = "chef/centos-6.6"
+    c.vm.hostname = "cenv"
+    c.vm.network "private_network", ip: "192.168.50.70"
+    c.vm.synced_folder ENV['HOME'], "/host"
+    c.vm.synced_folder "../provision/", "/provision"
+    c.vm.provision "shell", inline: "/provision/install.sh"
+  end
+
+  config.vm.provider "vmware_fusion" do |v|
+    v.gui = false
+    v.vmx["memsize"] = "4096"
+    v.vmx["numvcpus"] = "1"
+  end
+
+end
